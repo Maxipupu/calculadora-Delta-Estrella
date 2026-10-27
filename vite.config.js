@@ -5,5 +5,5 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   // Debe coincidir con el nombre de tu repositorio en GitHub
-  base: '/calculadora-delta-estrella/',
+  base: '/calculadora-Delta-Estrella/',
 })
