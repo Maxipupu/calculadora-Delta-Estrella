@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, HelpCircle, Layers, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Zap, AlertTriangle, HelpCircle, Delete } from 'lucide-react';
 
 /* ---------- Números complejos ---------- */
 const parseComplex = (str) => {
@@ -8,7 +8,6 @@ const parseComplex = (str) => {
   const s = str.trim().toLowerCase().replace(/\s+/g, '')
     .replace(/,/g, '.').replace(/i/g, 'j').replace('°', '');
 
-  // Polar: 25<30 o 25∠30
   const p = s.split(/[<∠]/);
   if (p.length === 2) {
     const mag = parseFloat(p[0]), deg = parseFloat(p[1]);
@@ -20,15 +19,12 @@ const parseComplex = (str) => {
   const num = '(?:\\d+\\.?\\d*|\\.\\d+)';
   const unit = (t) => (t === '' || t === '+' ? 1 : t === '-' ? -1 : parseFloat(t));
 
-  let m = s.match(new RegExp(`^([+-]?${num})([+-]${num}?)j$`)); // a+bj
+  let m = s.match(new RegExp(`^([+-]?${num})([+-]${num}?)j$`));
   if (m) return { r: parseFloat(m[1]), i: unit(m[2]), valid: true };
-
-  m = s.match(new RegExp(`^([+-]?${num}?)j$`));                  // bj
+  m = s.match(new RegExp(`^([+-]?${num}?)j$`));
   if (m) return { r: 0, i: unit(m[1]), valid: true };
-
-  m = s.match(new RegExp(`^([+-]?${num})$`));                    // a
+  m = s.match(new RegExp(`^([+-]?${num})$`));
   if (m) return { r: parseFloat(m[1]), i: 0, valid: true };
-
   return bad;
 };
 
@@ -41,13 +37,11 @@ const divide = (a, b) => {
 };
 
 const fix = (v) => (Math.abs(v) < 0.005 ? 0 : v).toFixed(2);
-
 const formatRect = (z) => {
   if (Math.abs(z.i) < 0.005) return `${fix(z.r)} Ω`;
   if (Math.abs(z.r) < 0.005) return `${z.i < 0 ? '-' : ''}${fix(Math.abs(z.i))}j Ω`;
   return `${fix(z.r)} ${z.i < 0 ? '-' : '+'} ${fix(Math.abs(z.i))}j Ω`;
 };
-
 const formatPolar = (z) => {
   const mag = Math.hypot(z.r, z.i);
   const deg = (Math.atan2(z.i, z.r) * 180) / Math.PI;
@@ -55,198 +49,190 @@ const formatPolar = (z) => {
 };
 
 /* ---------- Configuración ---------- */
-const DELTA_FIELDS = ['Zrs', 'Zst', 'Ztr'];
-
+const FIELDS = ['Zrs', 'Zst', 'Ztr'];
+const KEYS = ['+', '-', 'j', '∠', '.'];
 const PRESETS = {
-  'Carga RL equilibrada': { Zrs: '30+12j', Zst: '30+12j', Ztr: '30+12j' },
-  'Carga RC equilibrada': { Zrs: '20-15j', Zst: '20-15j', Ztr: '20-15j' },
-  'Carga desequilibrada': { Zrs: '10+5j', Zst: '20+15j', Ztr: '15-10j' },
+  'RL equilibrada': { Zrs: '30+12j', Zst: '30+12j', Ztr: '30+12j' },
+  'RC equilibrada': { Zrs: '20-15j', Zst: '20-15j', Ztr: '20-15j' },
+  'Desequilibrada': { Zrs: '10+5j', Zst: '20+15j', Ztr: '15-10j' },
 };
 
+const Node = ({ x, y, color, label, dx = 0, dy = 0 }) => (
+  <g>
+    <circle cx={x} cy={y} r="9" fill={color} />
+    <text x={x + dx} y={y + dy} fontSize="24" fontWeight="700" textAnchor="middle" fill={color}>{label}</text>
+  </g>
+);
+
 export default function App() {
-  const [inputs, setInputs] = useState(PRESETS['Carga RL equilibrada']);
+  const [inputs, setInputs] = useState(PRESETS['RL equilibrada']);
+  const [active, setActive] = useState('Zrs');
 
-  const parsed = Object.fromEntries(DELTA_FIELDS.map((k) => [k, parseComplex(inputs[k])]));
+  const parsed = Object.fromEntries(FIELDS.map((k) => [k, parseComplex(inputs[k])]));
   const { Zrs, Zst, Ztr } = parsed;
-
-  const isValid = DELTA_FIELDS.every((k) => parsed[k].valid);
+  const isValid = FIELDS.every((k) => parsed[k].valid);
   const zSum = add(add(Zrs, Zst), Ztr);
   const sumIsZero = isValid && Math.hypot(zSum.r, zSum.i) < 1e-9;
   const canCalc = isValid && !sumIsZero;
 
-  // Conversión Δ → Y (R-S-T)
-  const Zr = divide(multiply(Zrs, Ztr), zSum);
-  const Zs = divide(multiply(Zrs, Zst), zSum);
-  const Zt = divide(multiply(Zst, Ztr), zSum);
-
   const phases = [
-    { name: 'Zr', title: 'Fase R', color: 'text-red-400', formula: '(Zrs · Ztr) / ZΣ', z: Zr },
-    { name: 'Zs', title: 'Fase S', color: 'text-amber-400', formula: '(Zrs · Zst) / ZΣ', z: Zs },
-    { name: 'Zt', title: 'Fase T', color: 'text-blue-400', formula: '(Zst · Ztr) / ZΣ', z: Zt },
+    { name: 'Zr', title: 'Fase R', color: 'text-red-400', formula: 'Zrs · Ztr / ZΣ', z: divide(multiply(Zrs, Ztr), zSum) },
+    { name: 'Zs', title: 'Fase S', color: 'text-amber-400', formula: 'Zrs · Zst / ZΣ', z: divide(multiply(Zrs, Zst), zSum) },
+    { name: 'Zt', title: 'Fase T', color: 'text-blue-400', formula: 'Zst · Ztr / ZΣ', z: divide(multiply(Zst, Ztr), zSum) },
   ];
 
-  const handleInputChange = (e) => setInputs({ ...inputs, [e.target.name]: e.target.value });
+  const setField = (k, v) => setInputs((p) => ({ ...p, [k]: v }));
+  const append = (ch) => setInputs((p) => ({ ...p, [active]: p[active] + ch }));
+  const backspace = () => setInputs((p) => ({ ...p, [active]: p[active].slice(0, -1) }));
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Encabezado */}
-      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6 py-4 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-50">
-        <div className="flex items-center gap-3">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+      <div className="max-w-md mx-auto px-4 pb-10">
+        {/* Encabezado */}
+        <header className="flex items-center gap-3 py-4">
           <div className="p-2 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20">
             <Zap className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">
-              Calculadora Trifásica Delta a Estrella
-            </h1>
-            <p className="text-xs text-slate-400">
-              Conversión de impedancias en secuencia RST (sentido horario)
-            </p>
+            <h1 className="text-lg font-bold leading-tight">Delta → Estrella</h1>
+            <p className="text-xs text-slate-400">Conversión de impedancias trifásicas</p>
           </div>
-        </div>
+        </header>
 
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Presets */}
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
           {Object.entries(PRESETS).map(([label, values]) => (
             <button
               key={label}
               onClick={() => setInputs(values)}
-              className="text-xs px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+              className="shrink-0 text-sm px-4 py-2 rounded-full bg-slate-800 active:bg-slate-700 text-slate-200"
             >
               {label}
             </button>
           ))}
         </div>
-      </header>
 
-      <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Columna izquierda: esquemas y entradas */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <h2 className="text-lg font-semibold text-slate-200 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-amber-400" /> Esquema electrotécnico (RST)
-              </h2>
-              <span className="text-xs bg-amber-400/10 text-amber-400 border border-amber-400/20 px-2 py-1 rounded">
-                Formato: R + Xj o |Z| &lt; θ°
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-              {/* Delta */}
-              <div className="bg-slate-950/60 rounded-xl p-4 border border-slate-800/80 flex flex-col items-center">
-                <span className="text-sm font-semibold text-amber-400 mb-2">Carga en Delta (Δ)</span>
-
-                <svg viewBox="0 0 300 280" className="w-full max-w-[240px] h-auto" role="img" aria-label="Triángulo con impedancias Zrs, Zst y Ztr">
-                  <line x1="150" y1="40" x2="250" y2="220" stroke="#f59e0b" strokeWidth="4" />
-                  <line x1="250" y1="220" x2="50" y2="220" stroke="#f59e0b" strokeWidth="4" />
-                  <line x1="50" y1="220" x2="150" y2="40" stroke="#f59e0b" strokeWidth="4" />
-
-                  <circle cx="150" cy="40" r="8" className="fill-red-500" />
-                  <text x="150" y="25" textAnchor="middle" className="fill-red-400 text-sm font-bold">R</text>
-                  <circle cx="250" cy="220" r="8" className="fill-amber-500" />
-                  <text x="270" y="225" textAnchor="start" className="fill-amber-400 text-sm font-bold">S</text>
-                  <circle cx="50" cy="220" r="8" className="fill-blue-500" />
-                  <text x="30" y="225" textAnchor="end" className="fill-blue-400 text-sm font-bold">T</text>
-
-                  <text x="215" y="125" className="fill-amber-300 text-xs font-semibold">Zrs</text>
-                  <text x="150" y="245" textAnchor="middle" className="fill-amber-300 text-xs font-semibold">Zst</text>
-                  <text x="85" y="125" className="fill-amber-300 text-xs font-semibold">Ztr</text>
-                </svg>
-
-                <div className="w-full space-y-2 mt-2">
-                  {DELTA_FIELDS.map((k) => (
-                    <div key={k} className="flex items-center gap-2">
-                      <label htmlFor={k} className="text-xs font-bold text-slate-400 w-10">{k}:</label>
-                      <input
-                        id={k}
-                        type="text"
-                        name={k}
-                        value={inputs[k]}
-                        onChange={handleInputChange}
-                        placeholder="ej: 30+12j"
-                        className={`flex-1 bg-slate-800 border ${parsed[k].valid ? 'border-slate-700 focus:border-amber-400' : 'border-red-500'} rounded px-2.5 py-1 text-sm font-mono text-amber-300 focus:outline-none`}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Estrella */}
-              <div className="bg-slate-950/60 rounded-xl p-4 border border-slate-800/80 flex flex-col items-center">
-                <span className="text-sm font-semibold text-emerald-400 mb-2">Equivalente Estrella (Y)</span>
-
-                <svg viewBox="0 0 300 280" className="w-full max-w-[240px] h-auto" role="img" aria-label="Estrella con impedancias Zr, Zs y Zt">
-                  <line x1="150" y1="140" x2="150" y2="40" stroke="#10b981" strokeWidth="4" />
-                  <line x1="150" y1="140" x2="250" y2="220" stroke="#10b981" strokeWidth="4" />
-                  <line x1="150" y1="140" x2="50" y2="220" stroke="#10b981" strokeWidth="4" />
-
-                  <circle cx="150" cy="140" r="6" className="fill-slate-300" />
-                  <text x="165" y="145" className="fill-slate-400 text-xs">N</text>
-
-                  <circle cx="150" cy="40" r="8" className="fill-red-500" />
-                  <text x="150" y="25" textAnchor="middle" className="fill-red-400 text-sm font-bold">R</text>
-                  <circle cx="250" cy="220" r="8" className="fill-amber-500" />
-                  <text x="270" y="225" textAnchor="start" className="fill-amber-400 text-sm font-bold">S</text>
-                  <circle cx="50" cy="220" r="8" className="fill-blue-500" />
-                  <text x="30" y="225" textAnchor="end" className="fill-blue-400 text-sm font-bold">T</text>
-
-                  <text x="165" y="85" className="fill-emerald-300 text-xs font-semibold">Zr</text>
-                  <text x="215" y="175" className="fill-emerald-300 text-xs font-semibold">Zs</text>
-                  <text x="85" y="175" className="fill-emerald-300 text-xs font-semibold">Zt</text>
-                </svg>
-
-                <div className="w-full space-y-2 mt-2">
-                  {phases.map((p) => (
-                    <div key={p.name} className="bg-slate-900 p-2 rounded border border-slate-800 flex justify-between items-center text-xs">
-                      <span className={`font-bold ${p.color}`}>{p.name}:</span>
-                      <span className="font-mono text-emerald-300">{canCalc ? formatRect(p.z) : '---'}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+        {/* Diagramas */}
+        <section className="mt-3 grid grid-cols-2 gap-3">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3">
+            <p className="text-center text-sm font-semibold text-amber-400 mb-1">Delta (Δ)</p>
+            <svg viewBox="0 0 300 270" className="w-full h-auto" role="img" aria-label="Triángulo con Zrs, Zst y Ztr">
+              <polygon points="150,45 250,215 50,215" fill="none" stroke="#f59e0b" strokeWidth="6" strokeLinejoin="round" />
+              <Node x={150} y={45} color="#f87171" label="R" dy={-16} />
+              <Node x={250} y={215} color="#fbbf24" label="S" dx={20} dy={26} />
+              <Node x={50} y={215} color="#60a5fa" label="T" dx={-20} dy={26} />
+              <text x="228" y="118" fontSize="22" fill="#fcd34d">Zrs</text>
+              <text x="150" y="250" fontSize="22" fill="#fcd34d" textAnchor="middle">Zst</text>
+              <text x="72" y="118" fontSize="22" fill="#fcd34d" textAnchor="end">Ztr</text>
+            </svg>
           </div>
-        </div>
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3">
+            <p className="text-center text-sm font-semibold text-emerald-400 mb-1">Estrella (Y)</p>
+            <svg viewBox="0 0 300 270" className="w-full h-auto" role="img" aria-label="Estrella con Zr, Zs y Zt">
+              <g stroke="#10b981" strokeWidth="6" strokeLinecap="round">
+                <line x1="150" y1="135" x2="150" y2="45" />
+                <line x1="150" y1="135" x2="250" y2="215" />
+                <line x1="150" y1="135" x2="50" y2="215" />
+              </g>
+              <circle cx="150" cy="135" r="7" fill="#cbd5e1" />
+              <Node x={150} y={45} color="#f87171" label="R" dy={-16} />
+              <Node x={250} y={215} color="#fbbf24" label="S" dx={20} dy={26} />
+              <Node x={50} y={215} color="#60a5fa" label="T" dx={-20} dy={26} />
+              <text x="164" y="95" fontSize="22" fill="#6ee7b7">Zr</text>
+              <text x="212" y="168" fontSize="22" fill="#6ee7b7">Zs</text>
+              <text x="88" y="168" fontSize="22" fill="#6ee7b7" textAnchor="end">Zt</text>
+            </svg>
+          </div>
+        </section>
 
-        {/* Columna derecha: resultados */}
-        <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl flex-1 flex flex-col">
-            <h2 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" /> Resultados obtenidos
-            </h2>
+        {/* Entrada */}
+        <section className="mt-4 bg-slate-900 border border-slate-800 rounded-2xl p-4">
+          <h2 className="text-base font-semibold mb-3">Impedancias de la delta</h2>
+          <div className="space-y-3">
+            {FIELDS.map((k) => (
+              <div key={k} className="flex items-center gap-3">
+                <label htmlFor={k} className="w-11 text-sm font-bold text-slate-300">{k}</label>
+                <input
+                  id={k}
+                  type="text"
+                  inputMode="text"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  value={inputs[k]}
+                  onFocus={() => setActive(k)}
+                  onChange={(e) => setField(k, e.target.value)}
+                  placeholder="ej: 30+12j"
+                  className={`flex-1 min-w-0 bg-slate-800 border-2 ${
+                    parsed[k].valid
+                      ? active === k ? 'border-amber-400' : 'border-slate-700'
+                      : 'border-red-500'
+                  } rounded-xl px-3 py-3 text-lg font-mono text-amber-300 focus:outline-none`}
+                />
+              </div>
+            ))}
+          </div>
 
-            {canCalc ? (
-              <div className="space-y-4 flex-1 flex flex-col justify-between">
-                {phases.map((p) => (
-                  <div key={p.name} className="p-4 rounded-lg bg-slate-950 border border-slate-800">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className={`text-sm font-bold ${p.color}`}>Impedancia {p.name} ({p.title})</span>
-                      <span className="text-xs text-slate-500">{p.formula}</span>
-                    </div>
-                    <div className="text-base font-mono text-slate-100 font-semibold">{formatRect(p.z)}</div>
-                    <div className="text-xs font-mono text-slate-400">{formatPolar(p.z)}</div>
+          {/* Teclas rápidas */}
+          <div className="mt-4 grid grid-cols-6 gap-2">
+            {KEYS.map((ch) => (
+              <button
+                key={ch}
+                onPointerDown={(e) => e.preventDefault()}
+                onClick={() => append(ch)}
+                className="py-3 rounded-xl bg-slate-800 active:bg-slate-700 text-lg font-mono text-slate-100"
+              >
+                {ch}
+              </button>
+            ))}
+            <button
+              onPointerDown={(e) => e.preventDefault()}
+              onClick={backspace}
+              aria-label="Borrar"
+              className="py-3 rounded-xl bg-slate-800 active:bg-slate-700 flex items-center justify-center text-slate-100"
+            >
+              <Delete className="w-5 h-5" />
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-slate-500">
+            Escribe R + Xj (ej: 30+12j) o módulo ∠ ángulo (ej: 25∠30). Las teclas se agregan al campo seleccionado.
+          </p>
+        </section>
+
+        {/* Resultados */}
+        <section className="mt-4">
+          <h2 className="text-base font-semibold mb-3">Equivalente en estrella</h2>
+
+          {canCalc ? (
+            <div className="space-y-3">
+              {phases.map((p) => (
+                <div key={p.name} className="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                  <div className="flex items-baseline justify-between">
+                    <span className={`font-bold ${p.color}`}>{p.name} · {p.title}</span>
+                    <span className="text-xs text-slate-500">{p.formula}</span>
                   </div>
-                ))}
-
-                <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-800 text-xs">
-                  <span className="text-slate-400 block mb-1">Suma de la malla Delta (ZΣ = Zrs + Zst + Ztr):</span>
-                  <div className="font-mono text-amber-300 font-semibold">{formatRect(zSum)}</div>
+                  <div className="mt-1 text-2xl font-mono font-semibold text-emerald-300 break-words">{formatRect(p.z)}</div>
+                  <div className="text-sm font-mono text-slate-400">{formatPolar(p.z)}</div>
                 </div>
+              ))}
+              <div className="rounded-2xl bg-slate-800/50 border border-slate-800 p-3 text-sm">
+                <span className="text-slate-400">ZΣ = Zrs + Zst + Ztr = </span>
+                <span className="font-mono text-amber-300">{formatRect(zSum)}</span>
               </div>
-            ) : sumIsZero ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-amber-400">
-                <AlertTriangle className="w-10 h-10 mb-2" />
-                <p className="text-sm">ZΣ = 0: la suma de las tres impedancias de la delta no puede ser cero. Cambia algún valor.</p>
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-500">
-                <HelpCircle className="w-10 h-10 mb-2 opacity-50" />
-                <p className="text-sm">Ingresa expresiones válidas en todos los campos (ej: 30+12j, -15j o 10&lt;30°)</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </main>
+            </div>
+          ) : sumIsZero ? (
+            <div className="rounded-2xl bg-slate-900 border border-amber-500/30 p-6 text-center text-amber-400">
+              <AlertTriangle className="w-8 h-8 mx-auto mb-2" />
+              <p className="text-sm">ZΣ = 0: la suma de las tres impedancias no puede ser cero.</p>
+            </div>
+          ) : (
+            <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 text-center text-slate-500">
+              <HelpCircle className="w-8 h-8 mx-auto mb-2 opacity-60" />
+              <p className="text-sm">Revisa los campos marcados en rojo (ej: 30+12j, -15j o 10∠30).</p>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 }
