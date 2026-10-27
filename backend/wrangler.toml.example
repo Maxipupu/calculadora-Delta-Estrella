@@ -1,7 +1,0 @@
-name = "electrocalc-ai-gateway"
-main = "worker.mjs"
-compatibility_date = "2026-10-27"
-
-[vars]
-# Sustituir por el dominio REAL de GitHub Pages, sin barra final.
-ALLOWED_ORIGIN = "https://TU-USUARIO.github.io"
