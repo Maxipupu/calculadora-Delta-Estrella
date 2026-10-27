@@ -1,0 +1,94 @@
+   @import "tailwindcss";
+
+/* ElectroCalc: identidad móvil del inicio, sin alterar la lógica de cálculos */
+.electric-home{font-family:Inter,ui-sans-serif,system-ui,sans-serif;background-color:#070d19;background-image:radial-gradient(ellipse 100% 45% at 50% -12%,#16324a 0%,transparent 78%),linear-gradient(#a9bbd008 1px,transparent 1px),linear-gradient(90deg,#a9bbd008 1px,transparent 1px);background-size:auto,30px 30px,30px 30px;min-height:100vh}
+.electric-shell{max-width:570px}
+.electric-header{display:flex;align-items:center;gap:12px;padding:26px 0 23px}
+.electric-logo{display:grid;place-items:center;width:47px;height:47px;border-radius:16px;color:#07111c;background:linear-gradient(135deg,#ffd874,#f59e0b);box-shadow:0 8px 25px #fbbf2433}
+.electric-eyebrow{font-size:9px;font-weight:800;letter-spacing:2px;color:#7e9caf}
+.electric-title{font-size:25px;font-weight:850;letter-spacing:-1.1px;line-height:1.15}.electric-title span{color:#ffc65e}
+.electric-header-icon{display:grid;place-items:center;width:39px;height:39px;border:1px solid #26364d;background:#142033;border-radius:14px;color:#89a3b8}
+.electric-hero{position:relative;overflow:hidden;min-height:220px;padding:24px;border-radius:25px;background:linear-gradient(115deg,#12344e 0%,#10263b 55%,#1c2940 100%);border:1px solid #2d5270;box-shadow:0 15px 34px #0004}
+.electric-hero:after{content:"";position:absolute;inset:auto -42px -128px 30%;height:215px;border-radius:100%;border:1px solid #5c9bd02c;transform:rotate(-22deg)}
+.electric-hero-glow{position:absolute;right:-60px;top:-56px;width:250px;height:250px;background:radial-gradient(circle,#2c719650,transparent 70%);pointer-events:none}
+.electric-hero-content{position:relative;z-index:2;max-width:73%}.electric-hero-label{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:1.4px;color:#fbbf66;font-weight:800;margin-bottom:14px}
+.electric-hero h2{font-size:clamp(28px,7vw,39px);font-weight:800;line-height:1.08;letter-spacing:-1.5px}.electric-hero h2 em{font-style:normal;color:#ffcd76}
+.electric-hero p{font-size:12px;line-height:1.55;color:#bdd2df;margin-top:11px}.electric-hero-stats{display:flex;align-items:center;gap:6px;margin-top:18px;font-size:11px;color:#9cb5c9}.electric-hero-stats strong{color:#f2f7ff;font-size:15px}.electric-hero-stats span{width:1px;height:15px;background:#537087;margin:0 6px}
+.electric-hero-orbit{position:absolute;right:14px;top:59px;display:grid;place-items:center;width:95px;height:95px;border:1px solid #4f7d9c;border-radius:26px;transform:rotate(14deg);color:#ffd073;background:#21465b88;box-shadow:inset 0 0 20px #90cdf421,0 0 40px #1b86b51a}
+.electric-hero-orbit svg{transform:rotate(-14deg);filter:drop-shadow(0 0 13px #ffc46a55)}
+.electric-search{display:flex;align-items:center;gap:11px;margin-top:22px;padding:0 14px;height:52px;background:#121e30;border:1px solid #27374b;border-radius:16px;color:#91a8bc;transition:border .2s}.electric-search:focus-within{border-color:#eeb85a}.electric-search input{width:100%;min-width:0;flex:1;background:transparent;outline:none;border:0;color:#f8fafc;font-size:13px}.electric-search input::placeholder{color:#788b9f}.electric-search button{padding:6px}
+.electric-section-top{display:flex;align-items:center;justify-content:space-between;margin-top:26px;margin-bottom:13px}.electric-section-top h2{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;color:#f0f5fa;letter-spacing:-.3px}.electric-section-top h2 svg{color:#e9b455}.electric-section-top>span{font-size:11px;color:#8ca1b4}
+.electric-categories{display:flex;gap:8px;overflow-x:auto;padding:2px 1px 8px;scrollbar-width:none}.electric-categories::-webkit-scrollbar{display:none}.electric-categories button{white-space:nowrap;flex-shrink:0;border:1px solid #28374c;background:#121e2e;color:#a9bbca;padding:10px 14px;border-radius:12px;font-size:12px;font-weight:700}.electric-categories button.selected{background:#ffc468;border-color:#ffc468;color:#17202c}
+.electric-featured{display:flex;justify-content:space-between;align-items:center;text-align:left;width:100%;margin-top:17px;padding:18px 19px;border-radius:18px;border:1px solid #5c4e35;background:linear-gradient(115deg,#302a24,#201e22 75%);color:#fff}.electric-featured>div{display:flex;flex-direction:column;gap:4px}.electric-featured-kicker{font-size:10px;letter-spacing:1px;color:#f5bc60;font-weight:800}.electric-featured strong{font-size:17px}.electric-featured div>span:last-child{font-size:11px;color:#b8afb0}.electric-featured-action{display:grid;place-items:center;background:#ffc468;color:#20242e;width:38px;height:38px;border-radius:13px}
+.electric-tools-heading{margin-top:27px}.electric-fav-filter{display:flex;align-items:center;gap:6px;border:1px solid #39465b;border-radius:11px;padding:8px 11px;color:#e3b765;font-size:12px;font-weight:700}.electric-fav-filter.selected{background:#3a301d;border-color:#806735}
+.electric-tools-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.electric-tool-card{position:relative;border:1px solid #26364a;border-radius:19px;background:linear-gradient(155deg,#182537,#111a2a);overflow:hidden;min-width:0;transition:transform .15s,border-color .15s}.electric-tool-card:active{transform:scale(.98);border-color:#51718c}
+.electric-tool-open{width:100%;height:100%;min-height:179px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:15px 13px 13px;color:#e8f0f7}
+.electric-tool-icon{display:grid;place-items:center;width:43px;height:43px;border-radius:13px;margin-bottom:11px}.tone-amber{color:#ffd06c;background:#5b441f55}.tone-green{color:#54e6ad;background:#164b3c77}.tone-rose{color:#ff8094;background:#65293b55}.tone-blue{color:#6fbefa;background:#204e7655}.tone-violet{color:#c2a0fa;background:#4d376d66}.tone-yellow{color:#f6d36d;background:#66522155}.tone-teal{color:#4ce0ca;background:#19594f55}.tone-orange{color:#ffae6d;background:#663f2855}.tone-cyan{color:#6ce3e9;background:#205a6555}
+.electric-tool-category{font-size:9px;color:#8fa5b7;text-transform:uppercase;letter-spacing:.8px;font-weight:800;margin-bottom:5px}.electric-tool-open strong{font-size:14px;font-weight:800;line-height:1.23;max-width:100%;padding-right:3px}.electric-tool-desc{font-size:11px;line-height:1.35;color:#8c9fb1;margin-top:6px;padding-right:6px}.electric-tool-arrow{margin-top:auto;align-self:flex-end;color:#7089a0}
+.electric-star{position:absolute;top:13px;right:12px;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;color:#728398;background:#182638aa;z-index:2}.electric-star.is-favorite{color:#ffc466;background:#6e512d55}
+.electric-empty{text-align:center;padding:38px 16px;border:1px dashed #34465a;border-radius:20px;color:#99adbd;display:flex;align-items:center;flex-direction:column;gap:10px}.electric-empty strong{color:#e6edf5}.electric-empty p{font-size:12px}.electric-empty button{padding:9px 15px;border-radius:11px;background:#f8bd61;color:#101923;font-weight:700;font-size:12px}
+.electric-footer{color:#526b7c;font-size:11px;text-align:center;padding:29px 0 4px}
+@media(max-width:350px){.electric-hero-orbit{right:-20px;transform:rotate(14deg) scale(.75)}.electric-hero-content{max-width:82%}.electric-tool-open{padding:12px 10px;min-height:192px}.electric-tool-open strong{font-size:13px}.electric-star{right:7px;top:8px}}
+@media(prefers-reduced-motion:reduce){.electric-tool-card{transition:none}}
+
+/* Calculadora científica: misma identidad nocturna que el menú */
+.electric-home.electric-scientific{position:relative}
+.electric-calc-header{display:flex;align-items:center;gap:11px;padding:23px 0}
+.electric-calc-back{width:42px;height:42px;display:grid;place-items:center;color:#d5e4f1;background:#132336;border:1px solid #2b4057;border-radius:13px;flex-shrink:0}
+.electric-calc-head-icon{width:42px;height:42px;display:grid;place-items:center;color:#ffcb6b;background:#4738197a;border-radius:13px;flex-shrink:0}
+.electric-calc-title{font-size:17px;font-weight:800;letter-spacing:-.4px;margin-top:4px}
+.electric-calc-screen{padding:21px 19px 17px;border:1px solid #39516b;border-radius:23px;background:linear-gradient(135deg,#152e46,#111b2e 68%);box-shadow:0 14px 35px #0005;min-height:160px}
+.electric-calc-mode{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:9px;letter-spacing:1.1px;color:#89adc4;font-weight:800}
+.electric-calc-expression{display:block;width:100%;margin-top:17px;background:transparent;color:#f7f9fc;border:0;outline:none;font-size:clamp(26px,7.6vw,37px);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;min-width:0;height:51px;overflow-x:auto}
+.electric-calc-expression::placeholder{color:#647b8e}
+.electric-calc-answer{text-align:right;font-size:19px;font-weight:750;color:#ffca73;min-height:32px;margin-top:6px;overflow-wrap:anywhere}
+.electric-calc-error{font-size:12px;color:#ff9f9f;line-height:1.5;display:block}
+.electric-calc-hint{display:flex;justify-content:space-between;gap:10px;margin:18px 1px 12px;color:#879cb1;font-size:10px;line-height:1.35}
+.electric-calc-hint span:last-child{color:#ffc16e;white-space:nowrap}
+.electric-calc-keys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.electric-calc-key{min-width:0;min-height:56px;border-radius:15px;background:#192a3c;color:#eaf2fa;font-size:16px;font-weight:750;display:grid;place-items:center;border:1px solid #2e4054;touch-action:manipulation;box-shadow:0 3px 0 #0003;transition:background-color .15s}
+.electric-calc-key:active{background:#37516a;transform:translateY(1px)}
+.electric-calc-key.key-func{color:#f5c178;background:#263143}
+.electric-calc-key.key-op{background:#263a54;color:#86c9fb;font-size:21px}
+.electric-calc-key.key-clear,.electric-calc-key.key-delete{background:#4c3036;color:#ffacac}
+.electric-calc-key.key-angle{background:#233b3d;color:#76e2cd;font-size:12px}
+.electric-calc-key.key-equal{color:#101c28;background:linear-gradient(130deg,#ffd77d,#f5a841);border-color:#f9c566;font-size:24px}
+.electric-calc-history{margin-top:23px;padding:16px;border-radius:19px;border:1px solid #2b3c50;background:#121e30}
+.electric-calc-history h2{display:flex;align-items:center;gap:8px;color:#b3c5d3;font-weight:800;font-size:13px;margin-bottom:10px}
+.electric-calc-history button{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #2b3c50;width:100%;font-family:ui-monospace,monospace;font-size:12px;text-align:left}
+.electric-calc-history button span{overflow-wrap:anywhere;color:#a2b5c9}.electric-calc-history button strong{color:#f4c177;white-space:nowrap}
+.electric-calc-footnote{font-size:11px;color:#738ba0;line-height:1.6;margin-top:19px}
+.electric-header-icon{cursor:pointer;transition:border-color .15s,background .15s;flex-shrink:0}
+.electric-header-icon:active,.electric-header-icon:focus-visible{border-color:#f9c16b;color:#f9c16b}
+
+/* Cámara de circuitos: etapa experimental, foto y redibujo manual guiado */
+.circuit-photo-card{margin-top:12px;padding:17px;border-radius:22px;border:1px solid #4e4736;background:linear-gradient(135deg,#272b33,#151f30 65%);box-shadow:0 8px 27px #0003}
+.circuit-photo-title{display:flex;align-items:center;gap:11px}
+.circuit-photo-icon{width:45px;height:45px;background:#624b2e66;border-radius:14px;color:#ffcf80;display:grid;place-items:center}
+.circuit-photo-title h2{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.circuit-photo-badge{display:inline-flex;align-items:center;gap:4px;color:#ffce83;background:#6846237a;border:1px solid #9e6c344d;font-weight:800;font-size:9px;letter-spacing:.8px;border-radius:30px;padding:4px 8px;margin-top:5px}
+.circuit-photo-copy{margin-top:14px;color:#c6d5e3;font-size:13px;line-height:1.65}
+.circuit-photo-warning{margin-top:11px;font-size:11px;line-height:1.6;color:#e9b78c}
+.circuit-photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}
+.circuit-photo-actions button{min-height:46px;display:flex;justify-content:center;align-items:center;gap:8px;padding:9px;border-radius:13px;font-size:13px;font-weight:750}
+.circuit-photo-primary{color:#152131;background:linear-gradient(110deg,#ffda8a,#ffc160)}
+.circuit-photo-secondary{color:#d5e3ef;border:1px solid #3d4d60;background:#26364a}
+.circuit-photo-error{color:#ffb4b4;margin-top:10px;font-size:12px}
+.circuit-photo-preview{margin-top:15px;border:1px solid #465b71;border-radius:14px;overflow:hidden;background:#0b1321}
+.circuit-photo-preview-top{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;color:#dbe8f1;font-size:12px;font-weight:700}
+.circuit-photo-preview-top button{display:flex;align-items:center;gap:4px;color:#ffbba8;font-size:11px}
+.circuit-photo-preview img{display:block;width:100%;max-height:270px;object-fit:contain;background:#0b1321}
+.circuit-photo-file{display:block;padding:8px 12px;color:#9caebc;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.circuit-photo-steps{display:flex;justify-content:space-between;gap:5px;margin-top:15px}
+.circuit-photo-steps span{color:#8c9eb2;font-size:10px;font-weight:750;text-align:center;flex:1;padding:7px 4px;border:1px solid #435068;border-radius:10px}
+.circuit-photo-steps span.is-done{color:#84e8c3;border-color:#32715a;background:#204b3d55}
+.circuit-photo-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px;padding:11px;border:1px solid #697a85;border-radius:12px;color:#eef2f7;font-size:12px;font-weight:750}
+.circuit-photo-private{margin-top:11px;font-size:10px;color:#8d9eae;line-height:1.5}
+.circuit-editor-anchor{scroll-margin-top:20px}
+.circuit-photo-reference{border:1px solid #31445a;border-radius:12px;overflow:hidden;background:#0b1424;margin:12px 0 14px}
+.circuit-photo-reference span,.circuit-photo-diagram-label{display:block;color:#b3c6d7;font-weight:700;font-size:11px;padding:9px 11px}
+.circuit-photo-reference img{display:block;max-height:260px;width:100%;object-fit:contain}
+.circuit-selectable{cursor:pointer;outline:none}
+.circuit-selectable:focus-visible{filter:drop-shadow(0 0 3px #fbbf24)}
+@media(max-width:350px){.electric-calc-keys{gap:6px}.electric-calc-key{min-height:50px;font-size:14px;border-radius:12px}.electric-calc-hint{flex-wrap:wrap}.circuit-photo-actions button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.electric-calc-key{transition:none}}
