@@ -1,0 +1,7 @@
+name = "electrocalc-ai-gateway"
+main = "worker.mjs"
+compatibility_date = "2026-10-27"
+
+[vars]
+# Origen exacto de GitHub Pages. NO incluir /calculadora-Delta-Estrella/
+ALLOWED_ORIGIN = "https://Maxipupu.github.io"
